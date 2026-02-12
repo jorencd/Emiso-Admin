@@ -2,10 +2,11 @@ import React, { useState } from 'react'
 import bg from '../assets/loginBG/loginBG.jpg'
 import Logo from '../assets/logo/PLSPLogo.png'
 import Popup from '../components/pop_up/Popup';
+import { supabase } from '../supabaseClient';
 
 function LoginPage() {
-  const idRegex = /^\d{6,12}$/;
-  
+  const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+
   const [popup, setPopup] = useState({
     show: false,
     message: "",
@@ -20,7 +21,7 @@ function LoginPage() {
   };
 
   const [form, setForm] = useState({
-    loginId: '',
+    username: '',
     loginPass: '',
   });
 
@@ -32,20 +33,42 @@ function LoginPage() {
     }));
   };
 
-  // LOGIN VALIDATION
-  const validateLogin = () => {
-    if (!idRegex.test(form.loginId)) {
-      showPopup("Admin ID must be 6–12 digits");
-      return false;
+  const validateLogin = async () => {
+    if (!form.username) {
+      showPopup("Username is required");
+      return;
     }
 
     if (!form.loginPass) {
       showPopup("Password is required");
-      return false;
+      return;
     }
 
-    showPopup("Login Successful ✅", true);
-    return true;
+    if (form.loginPass.length < 8) {
+      showPopup("Password must be at least 8 characters");
+      return;
+    }
+
+    if (!passwordRegex.test(form.loginPass)) {
+      showPopup("Password must contain a special character");
+      return;
+    }
+
+    // 🔥 Supabase Query
+    const { data, error } = await supabase
+      .from("admins")
+      .select("*")
+      .eq("username", form.username)
+      .eq("password", form.loginPass)
+      .single();
+
+    if (error || !data) {
+      showPopup("Invalid username or password");
+      return;
+    }
+
+    showPopup("Login Successful", true);
+
   };
 
   return (
@@ -74,29 +97,36 @@ function LoginPage() {
         </div>
 
         <div className='flex flex-col w-100 justify-center items-center gap-y-2 bg-white rounded-xl p-6'>
-          <h1 className='text-green-900 font-bold text-3xl'>Welcome!</h1>
+          <h1 className='text-green-900 font-bold text-3xl'>Admin</h1>
           <p>Fill out the information below in order to access your account</p>
 
-          <input
-            name="loginId"
-            placeholder='Admin ID'
-            className='border-2 border-gray-300 rounded p-2 w-full'
-            value={form.loginId}
-            onChange={handleInputChange}
-          />
+          <div className='w-full'>
+            <input
+              name="username"
+              placeholder='Admin Username'
+              className='border-2 border-gray-300 rounded p-2 w-full'
+              value={form.username}
+              onChange={handleInputChange}
+            />
+          </div>
 
-          <input
-            type="password"
-            name="loginPass"
-            placeholder='Password'
-            className='border-2 border-gray-300 rounded p-2 w-full'
-            value={form.loginPass}
-            onChange={handleInputChange}
-          />
+          <div className='w-full'>
+            <input
+              type="password"
+              name="loginPass"
+              placeholder='Password'
+              className='border-2 border-gray-300 rounded p-2 w-full'
+              value={form.loginPass}
+              onChange={handleInputChange}
+            />
+            <p className='text-xs text-gray-500 mt-1'>
+              Must be 8+ char with special character
+            </p>
+          </div>
 
           <button
             onClick={validateLogin}
-            className='bg-green-700 w-full text-white px-4 py-2 rounded hover:bg-green-800 transition'
+            className='bg-green-700 w-full text-white px-4 py-2 rounded hover:bg-green-800 transition cursor-pointer'
           >
             Login
           </button>
