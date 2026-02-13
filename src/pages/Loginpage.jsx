@@ -83,7 +83,7 @@ function LoginPage() {
         onClose={() => setPopup({ ...popup, show: false })}
       />
 
-      <div className='absolute inset-0 bg-gradient-to-b from-green-100/60 to-emerald-800/100 backdrop-blur-xs'></div>
+      <div className='absolute inset-0 bg-linear-to-b from-green-100/60 to-emerald-800 backdrop-blur-xs'></div>
 
       <div className='flex md:flex-row flex-col md:mx-30 gap-y-4 gap-x-30 items-center justify-center relative z-10 h-full'>
         <div className='flex flex-col items-center gap-y-4'>
@@ -103,7 +103,7 @@ function LoginPage() {
           <div className='w-full'>
             <input
               name="username"
-              placeholder='Admin Username'
+              placeholder='Username'
               className='border-2 border-gray-300 rounded p-2 w-full'
               value={form.username}
               onChange={handleInputChange}
