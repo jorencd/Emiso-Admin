@@ -30,6 +30,7 @@ function AdminDashboard() {
               value={card.value}
               description={card.description}
               className={card.className}
+              arrow={card.arrow}
             >
               {card.title === "Active Readers" ? (
                 <ResponsiveContainer width="100%" height={60}>

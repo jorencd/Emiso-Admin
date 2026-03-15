@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from "react";
 import Button from "../button/Button";
 import AddModal from "../modal/AddModal";
+import PageTable from "../tables/PageTable";
+import TableData from "../../../assets/data/tableData";
 
 function SearchFilterTable({
   title,
@@ -9,6 +11,7 @@ function SearchFilterTable({
   onSearchChange,
   onCategoryChange,
   buttonText,
+  inputText,
   children,
 }) {
   const [search, setSearch] = useState("");
@@ -41,7 +44,7 @@ function SearchFilterTable({
   );
 
   return (
-    <div className="w-full h-screen p-2 px-10 border border-green-700">
+    <div className="w-full">
       <h1 className="mb-4 text-xl font-bold text-neutral-700">{title}</h1>
 
       <div className="flex justify-between w-full gap-3 mb-4">
@@ -77,6 +80,9 @@ function SearchFilterTable({
       <AddModal 
         isOpen={isModalOpen} 
         onClose={handleCloseModal}
+        title={buttonText}
+        categories={categories}
+        inputText={`${buttonText} Here`} 
       />
     </div>
   );
